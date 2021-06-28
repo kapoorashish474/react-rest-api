@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import './App.css';
 import axios from 'axios';
 
+let initialState : UserInfo;
 
 // Object Structure creation 
 interface UserInfo {
@@ -58,7 +59,7 @@ function App() {
   const fetchUserData =() => {
     // this is setting Data to UI 
     fetchRandomData().then(randomData => {
-
+      setRandomUserData(JSON.stringify(randomData, null, 2) || '')
       const newUserInfo = [
         ...userInfos,
         ...randomData.results,
@@ -67,36 +68,45 @@ function App() {
     });
   }
 
+  const clearState =() => {
+    setUserInfos(initialState);
+  }
   // this is called by default on Page Load 
   useEffect(() => {
+    let newUserInfo;
     fetchRandomData().then(randomData => {
       setRandomUserData(JSON.stringify(randomData, null, 2) || '')
-      const newUserInfo = [
+      newUserInfo = [
         ...userInfos,
         ...randomData.results,
       ]
+      initialState = randomData.results ;
       setUserInfos(newUserInfo);
     });
-    
+   
   }, [])
 
   return (
     <div className="App">
-      {console.log(userInfos.length)}
       <React.Fragment>
-      <tr>
-          {
-            userInfos.map((userInfo: UserInfo, idx: number) => (
-              <div key={idx}>
-                <p>Full Name : {parseUserName(userInfo)}</p>
-                <img src={userInfo.picture.thumbnail}></img>
-                <p>Location : {parseLocation(userInfo)}</p>
-              </div>
-            ))
-          }
+      {userInfos ? (
+        <tr>
+        {
+          userInfos.map((userInfo: UserInfo, idx: number) => (
+            <div key={idx}>
+              <p>Full Name : {parseUserName(userInfo)}</p>
+              <img src={userInfo.picture.thumbnail}></img>
+              <p>Location : {parseLocation(userInfo)}</p>
+            </div>
+          ))
+        }
         </tr>
+      ) : null
+        
+      }
       </React.Fragment>
       <button onClick={ () => fetchUserData()}>Find User Data</button>
+      <button onClick={ () => clearState()}>Reset to First User</button>
     </div>
   );
 }
