@@ -2,7 +2,7 @@
 
 ## Command for creating the app
 
-npx create-react-app my-app --template typescript
+npx create-react-app react-rest-api --template typescript
 
 ## What does this app include
 
